@@ -9,19 +9,19 @@ library(quanteda)
 library(gridExtra)
 
 
-
 # FUNCTIONS ---------------------------------------------------------------
 
 removeURL <- function(x) gsub("http[^[:space:]]*", "", x)
 removeTwitterlinks <- function(x) gsub("pic.twitter.com[^[:space:]]*", "", x)
 tweetcolumns <- function(x) x[, c("Content")]
-searchcolumns <- function(x) x[, c("Ô..Title", "Description")]
+searchcolumns <- function(x) x[, c("ÔøΩ..Title", "Description")]
+
 fixpunct <- function(x) {
-  x <- gsub("‚<U+0080><U+0099>", "'", x)
-  x <- gsub("‚<U+0080><U+0098>", "'", x)
-  x <- gsub("‚<U+0080><U+009C>", '"', x)
-  x <- gsub("‚<U+0080>ù", '"', x)
-  x <- gsub("‚<U+0080><U+0093>", "<U+0096>", x)
+  x <- gsub("ÔøΩ<U+0080><U+0099>", "'", x)
+  x <- gsub("ÔøΩ<U+0080><U+0098>", "'", x)
+  x <- gsub("ÔøΩ<U+0080><U+009C>", '"', x)
+  x <- gsub("ÔøΩ<U+0080>ÔøΩ", '"', x)
+  x <- gsub("ÔøΩ<U+0080><U+0093>", "<U+0096>", x)
   x <- gsub("&", "and", x)
   x <- tolower(x)
   x <- gsub("[0-9]+ hours ago", "", x)
@@ -61,7 +61,9 @@ fixpunct <- function(x) {
   x <- gsub("bookb", "book b", x)
   x <- gsub("citationc", "citation c", x)
   x <- gsub("themillennialbiz", "the millennial biz", x)
-} # fixing punctuation and various errors
+}
+
+# fixing punctuation and various errors
 
 preptweets <- function(x) {
   x <- tweetcolumns(x)
@@ -99,16 +101,16 @@ MillennialSearchResults <- searchcolumns(MillennialSearchResults)
 GoogleScholar <- searchcolumns(GoogleScholar)
 
 
-BoomerSearchResults$Ô..Title <- fixpunct(BoomerSearchResults$Ô..Title)
+BoomerSearchResults$ÔøΩ..Title <- fixpunct(BoomerSearchResults$ÔøΩ..Title)
 BoomerSearchResults$Description <- fixpunct(BoomerSearchResults$Description)
 
-GenZSearchResults$Ô..Title <- fixpunct(GenZSearchResults$Ô..Title)
+GenZSearchResults$ÔøΩ..Title <- fixpunct(GenZSearchResults$ÔøΩ..Title)
 GenZSearchResults$Description <- fixpunct(GenZSearchResults$Description)
 
-MillennialSearchResults$Ô..Title <- fixpunct(MillennialSearchResults$Ô..Title)
+MillennialSearchResults$ÔøΩ..Title <- fixpunct(MillennialSearchResults$ÔøΩ..Title)
 MillennialSearchResults$Description <- fixpunct(MillennialSearchResults$Description)
 
-GoogleScholar$Ô..Title <- fixpunct(GoogleScholar$Ô..Title)
+GoogleScholar$ÔøΩ..Title <- fixpunct(GoogleScholar$ÔøΩ..Title)
 GoogleScholar$Description <- fixpunct(GoogleScholar$Description)
 
 
@@ -363,25 +365,25 @@ GoogleScholar.bicnt$cnt.2 <- sapply(GoogleScholar.bicnt$tok2, function(x) Google
 
 # Define a function to calculate Mutual Information
 BTMI <- function(bi.cnt, cnt.1, cnt.2) {
-  log2((N_BT * bi.cnt) / (as.double(cnt.1) * cnt.2))
+log2((N_BT * bi.cnt) / (as.double(cnt.1) * cnt.2))
 } # mutual information formula
 GZTMI <- function(bi.cnt, cnt.1, cnt.2) {
-  log2((N_GZT * bi.cnt) / (as.double(cnt.1) * cnt.2))
+log2((N_GZT * bi.cnt) / (as.double(cnt.1) * cnt.2))
 }
 MLTMI <- function(bi.cnt, cnt.1, cnt.2) {
-  log2((N_MLT * bi.cnt) / (as.double(cnt.1) * cnt.2))
+log2((N_MLT * bi.cnt) / (as.double(cnt.1) * cnt.2))
 }
 BSRMI <- function(bi.cnt, cnt.1, cnt.2) {
-  log2((N_BSR * bi.cnt) / (as.double(cnt.1) * cnt.2))
+log2((N_BSR * bi.cnt) / (as.double(cnt.1) * cnt.2))
 }
 GZSRMI <- function(bi.cnt, cnt.1, cnt.2) {
-  log2((N_GZSR * bi.cnt) / (as.double(cnt.1) * cnt.2))
+log2((N_GZSR * bi.cnt) / (as.double(cnt.1) * cnt.2))
 }
 MLSRMI <- function(bi.cnt, cnt.1, cnt.2) {
-  log2((N_MLSR * bi.cnt) / (as.double(cnt.1) * cnt.2))
+log2((N_MLSR * bi.cnt) / (as.double(cnt.1) * cnt.2))
 }
 GSMI <- function(bi.cnt, cnt.1, cnt.2) {
-  log2((N_GS * bi.cnt) / (as.double(cnt.1) * cnt.2))
+log2((N_GS * bi.cnt) / (as.double(cnt.1) * cnt.2))
 }
 
 
@@ -397,13 +399,13 @@ GoogleScholar.bicnt$MI <- with(GoogleScholar.bicnt, mapply(GSMI, bi.cnt, cnt.1, 
 
 # Put the data frame in order by MI and look at the top of the table
 
-BoomerTweets.bicnt <- BoomerTweets.bicnt[order(BoomerTweets.bicnt$MI, decreasing = T), ]
-GenZTweets.bicnt <- GenZTweets.bicnt[order(GenZTweets.bicnt$MI, decreasing = T), ]
-MillennialTweets.bicnt <- MillennialTweets.bicnt[order(MillennialTweets.bicnt$MI, decreasing = T), ]
-BoomerSearchResults.bicnt <- BoomerSearchResults.bicnt[order(BoomerSearchResults.bicnt$MI, decreasing = T), ]
-GenZSearchResults.bicnt <- GenZSearchResults.bicnt[order(GenZSearchResults.bicnt$MI, decreasing = T), ]
-MillennialSearchResults.bicnt <- MillennialSearchResults.bicnt[order(MillennialSearchResults.bicnt$MI, decreasing = T), ]
-GoogleScholar.bicnt <- GoogleScholar.bicnt[order(GoogleScholar.bicnt$MI, decreasing = T), ]
+BoomerTweets.bicnt <- BoomerTweets.bicnt[order(BoomerTweets.bicnt$MI, decreasing = T),]
+GenZTweets.bicnt <- GenZTweets.bicnt[order(GenZTweets.bicnt$MI, decreasing = T),]
+MillennialTweets.bicnt <- MillennialTweets.bicnt[order(MillennialTweets.bicnt$MI, decreasing = T),]
+BoomerSearchResults.bicnt <- BoomerSearchResults.bicnt[order(BoomerSearchResults.bicnt$MI, decreasing = T),]
+GenZSearchResults.bicnt <- GenZSearchResults.bicnt[order(GenZSearchResults.bicnt$MI, decreasing = T),]
+MillennialSearchResults.bicnt <- MillennialSearchResults.bicnt[order(MillennialSearchResults.bicnt$MI, decreasing = T),]
+GoogleScholar.bicnt <- GoogleScholar.bicnt[order(GoogleScholar.bicnt$MI, decreasing = T),]
 
 # save for later
 
@@ -418,60 +420,60 @@ GoogleScholar.N <- N_GS
 
 # Excluding rare bigrams from MI ranking (less than 10)
 
-BoomerTweetsMIFINAL__df <- head(BoomerTweets.bicnt[BoomerTweets.bicnt$bi.cnt > 10, ], 20)
-GenZTweetsMIFINAL__df <- head(GenZTweets.bicnt[GenZTweets.bicnt$bi.cnt > 10, ], 20)
-MillennialTweetsMIFINAL__df <- head(MillennialTweets.bicnt[MillennialTweets.bicnt$bi.cnt > 10, ], 20)
-BoomerSearchResultsMIFINAL__df <- head(BoomerSearchResults.bicnt[BoomerSearchResults.bicnt$bi.cnt > 10, ], 20)
-GenZSearchResultsMIFINAL__df <- head(GenZSearchResults.bicnt[GenZSearchResults.bicnt$bi.cnt > 10, ], 20)
-MillennialSearchResultsMIFINAL__df <- head(MillennialSearchResults.bicnt[MillennialSearchResults.bicnt$bi.cnt > 10, ], 20)
-GoogleScholarMIFINAL__df <- head(GoogleScholar.bicnt[GoogleScholar.bicnt$bi.cnt > 10, ], 20)
+BoomerTweetsMIFINAL__df <- head(BoomerTweets.bicnt[BoomerTweets.bicnt$bi.cnt > 10,], 20)
+GenZTweetsMIFINAL__df <- head(GenZTweets.bicnt[GenZTweets.bicnt$bi.cnt > 10,], 20)
+MillennialTweetsMIFINAL__df <- head(MillennialTweets.bicnt[MillennialTweets.bicnt$bi.cnt > 10,], 20)
+BoomerSearchResultsMIFINAL__df <- head(BoomerSearchResults.bicnt[BoomerSearchResults.bicnt$bi.cnt > 10,], 20)
+GenZSearchResultsMIFINAL__df <- head(GenZSearchResults.bicnt[GenZSearchResults.bicnt$bi.cnt > 10,], 20)
+MillennialSearchResultsMIFINAL__df <- head(MillennialSearchResults.bicnt[MillennialSearchResults.bicnt$bi.cnt > 10,], 20)
+GoogleScholarMIFINAL__df <- head(GoogleScholar.bicnt[GoogleScholar.bicnt$bi.cnt > 10,], 20)
 
 
 # T-SCORE -----------------------------------------------------------------
 
 BTtscore <- function(bi.cnt, cnt.1, cnt.2, N_BT) {
-  (bi.cnt - (1 / N_BT) * cnt.1 * cnt.2) / sqrt(bi.cnt)
+(bi.cnt - (1 / N_BT) * cnt.1 * cnt.2) / sqrt(bi.cnt)
 } # t score formula
 GZTtscore <- function(bi.cnt, cnt.1, cnt.2, N_GZT) {
-  (bi.cnt - (1 / N_GZT) * cnt.1 * cnt.2) / sqrt(bi.cnt)
+(bi.cnt - (1 / N_GZT) * cnt.1 * cnt.2) / sqrt(bi.cnt)
 }
 MLTtscore <- function(bi.cnt, cnt.1, cnt.2, N_MLT) {
-  (bi.cnt - (1 / N_MLT) * cnt.1 * cnt.2) / sqrt(bi.cnt)
+(bi.cnt - (1 / N_MLT) * cnt.1 * cnt.2) / sqrt(bi.cnt)
 }
 BSRtscore <- function(bi.cnt, cnt.1, cnt.2, N_BSR) {
-  (bi.cnt - (1 / N_BSR) * cnt.1 * cnt.2) / sqrt(bi.cnt)
+(bi.cnt - (1 / N_BSR) * cnt.1 * cnt.2) / sqrt(bi.cnt)
 }
 GZSRtscore <- function(bi.cnt, cnt.1, cnt.2, N_GZSR) {
-  (bi.cnt - (1 / N_GZSR) * cnt.1 * cnt.2) / sqrt(bi.cnt)
+(bi.cnt - (1 / N_GZSR) * cnt.1 * cnt.2) / sqrt(bi.cnt)
 }
 MLSRtscore <- function(bi.cnt, cnt.1, cnt.2, N_MLSR) {
-  (bi.cnt - (1 / N_MLSR) * cnt.1 * cnt.2) / sqrt(bi.cnt)
+(bi.cnt - (1 / N_MLSR) * cnt.1 * cnt.2) / sqrt(bi.cnt)
 }
 GStscore <- function(bi.cnt, cnt.1, cnt.2, N_GS) {
-  (bi.cnt - (1 / N_GS) * cnt.1 * cnt.2) / sqrt(bi.cnt)
+(bi.cnt - (1 / N_GS) * cnt.1 * cnt.2) / sqrt(bi.cnt)
 }
 
 
 BoomerTweets.bicnt$t <- with(BoomerTweets.bicnt, mapply(BTtscore, bi.cnt, cnt.1, cnt.2, BoomerTweets.N))
-BoomerTweets.bicnt <- BoomerTweets.bicnt[order(BoomerTweets.bicnt$t, decreasing = T), ]
+BoomerTweets.bicnt <- BoomerTweets.bicnt[order(BoomerTweets.bicnt$t, decreasing = T),]
 
 GenZTweets.bicnt$t <- with(GenZTweets.bicnt, mapply(GZTtscore, bi.cnt, cnt.1, cnt.2, GenZTweets.N))
-GenZTweets.bicnt <- GenZTweets.bicnt[order(GenZTweets.bicnt$t, decreasing = T), ]
+GenZTweets.bicnt <- GenZTweets.bicnt[order(GenZTweets.bicnt$t, decreasing = T),]
 
 MillennialTweets.bicnt$t <- with(MillennialTweets.bicnt, mapply(MLTtscore, bi.cnt, cnt.1, cnt.2, MillennialTweets.N))
-MillennialTweets.bicnt <- MillennialTweets.bicnt[order(MillennialTweets.bicnt$t, decreasing = T), ]
+MillennialTweets.bicnt <- MillennialTweets.bicnt[order(MillennialTweets.bicnt$t, decreasing = T),]
 
 BoomerSearchResults.bicnt$t <- with(BoomerSearchResults.bicnt, mapply(BSRtscore, bi.cnt, cnt.1, cnt.2, BoomerSearchResults.N))
-BoomerSearchResults.bicnt <- BoomerSearchResults.bicnt[order(BoomerSearchResults.bicnt$t, decreasing = T), ]
+BoomerSearchResults.bicnt <- BoomerSearchResults.bicnt[order(BoomerSearchResults.bicnt$t, decreasing = T),]
 
 GenZSearchResults.bicnt$t <- with(GenZSearchResults.bicnt, mapply(GZSRtscore, bi.cnt, cnt.1, cnt.2, GenZSearchResults.N))
-GenZSearchResults.bicnt <- GenZSearchResults.bicnt[order(GenZSearchResults.bicnt$t, decreasing = T), ]
+GenZSearchResults.bicnt <- GenZSearchResults.bicnt[order(GenZSearchResults.bicnt$t, decreasing = T),]
 
 MillennialSearchResults.bicnt$t <- with(MillennialSearchResults.bicnt, mapply(MLSRtscore, bi.cnt, cnt.1, cnt.2, MillennialSearchResults.N))
-MillennialSearchResults.bicnt <- MillennialSearchResults.bicnt[order(MillennialSearchResults.bicnt$t, decreasing = T), ]
+MillennialSearchResults.bicnt <- MillennialSearchResults.bicnt[order(MillennialSearchResults.bicnt$t, decreasing = T),]
 
 GoogleScholar.bicnt$t <- with(GoogleScholar.bicnt, mapply(GStscore, bi.cnt, cnt.1, cnt.2, GoogleScholar.N))
-GoogleScholar.bicnt <- GoogleScholar.bicnt[order(GoogleScholar.bicnt$t, decreasing = T), ]
+GoogleScholar.bicnt <- GoogleScholar.bicnt[order(GoogleScholar.bicnt$t, decreasing = T),]
 
 
 BoomerTweetsTScoreFINAL__df <- head(BoomerTweets.bicnt[BoomerTweets.bicnt$bi.cnt < 20, c("t", "bi.cnt", "cnt.1", "cnt.2", "bigram")], 20)
